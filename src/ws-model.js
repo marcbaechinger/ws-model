@@ -70,7 +70,7 @@ var selector = require("../public/javascripts/selector-engine.js"),
 			socket.emit("model-init", models[modelId].dataModel);
 		});
 		socket.on('model-timestamp', function (modelId) {
-			socket.emit("model-timestamp", models[modelId].dataModel.timestamp);
+			socket.emit("model-timestamp", models[modelId].dataModel.timestamp, modelId);
 		});
 	};
 
@@ -86,6 +86,7 @@ var WebSocketModel = function (ioSockets) {
 	ioSockets.on('connection', _.partial(handleConnection, this.models));
 };
 WebSocketModel.prototype.registerModel = function (id, model) {
+	model.modelId = id;
 	this.models[id] = {
 		dataModel: model,
 		listeners: []
