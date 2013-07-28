@@ -1,8 +1,8 @@
 /*global io: false, Observable: false */
 /*jslint browser: true */
 (function (global) {
-	var WebSocketModel = function () {
-		this.modelId = "default";
+	var WebSocketModel = function (modelId) {
+		this.modelId = modelId || "default";
 		this.model = {
 			state: "created",
 			data: {}

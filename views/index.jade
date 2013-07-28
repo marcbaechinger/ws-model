@@ -27,7 +27,7 @@ block content
 		code#modelView
 	script
 		(function () {
-			var model = new WebSocketModel(),
+			var model = new WebSocketModel("default"),
 				render = function (model) {
 					$("#modelView").text(JSON.stringify(model, null, 4));
 				},
