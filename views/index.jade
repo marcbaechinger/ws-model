@@ -32,12 +32,10 @@ block content
 			};
 
 		model.bind("set", function (data, selector, value) {
-			console.log("set", data, selector, value);
 			render(data);
 		});
 
 		model.bind("init", function (data, state) {
-			console.log("init");
 			render(data);
 		});
 
