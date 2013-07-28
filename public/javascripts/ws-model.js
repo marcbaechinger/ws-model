@@ -9,7 +9,6 @@
 		};
 		Observable.apply(this, []);
 		this.webSocketSetup(this.model);
-		
 	};
 	
 	WebSocketModel.prototype = new Observable();
@@ -37,7 +36,7 @@
 	WebSocketModel.prototype.webSocketSetup = function (model) {
 		var that = this;
 		
-		this.socket = io.connect('http://localhost');
+		this.socket = io.connect('http://localhost/model');
 		
 		this.socket.on('model-change', function (data) {
 			console.log("retrieved 'model-change' event", data);

@@ -39,4 +39,4 @@ server = http.createServer(app).listen(app.get('port'), function(){
 
 io =  require('socket.io').listen(server);
 
-var model = new wsModel.WebSocketModel(io.sockets);
+var model = new wsModel.WebSocketModel(io.of("/model"));

@@ -2,7 +2,6 @@
 	var isIndex = function(token) {
 		return !!token.trim().match(/^(0|[1-9][0-9]*)$/);
 	};
-	
 	var update = function (selector, value, model) {
 		var nodes = selector.split("."),
 			currentNode;
