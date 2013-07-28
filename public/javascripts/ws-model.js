@@ -53,8 +53,10 @@
 		this.emit("init", this.model.data, this.model.status);
 	};
 	WebSocketModel.prototype.handleModelChangeEvent = function (data) {
-		console.log("retrieved 'model-change' event", data);
-		this.set(data.selector, data.value, data.timestamp);
+		if (data.modelId === this.modelId) {
+			console.log("retrieved 'model-change' event", data);
+			this.set(data.selector, data.value, data.timestamp);	
+		}
 	};
 	
 	
