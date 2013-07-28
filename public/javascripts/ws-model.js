@@ -34,28 +34,27 @@
 		get(selector, this.model.data);
 	};
 	WebSocketModel.prototype.webSocketSetup = function (model) {
-		var that = this;
-		
 		this.socket = io.connect('http://localhost/model');
 		
-		this.socket.on('model-change', function (data) {
-			console.log("retrieved 'model-change' event", data);
-			that.set(data.selector, data.value, data.timestamp);
-		});
-		
-		this.socket.on('model-init', proxy(this, this.initModel));
+		// register handlers
+		this.socket.on('model-init', proxy(this, this.handleInitModelEvent));
+		this.socket.on('model-change', proxy(this, this.handleModelChangeEvent));
 		this.socket.on("error", function (data) {
 			console.err("remote error", data);
 		});
-		
+		// trigger registration
 		this.socket.emit("model-register", this.modelId);
 	};
-	WebSocketModel.prototype.initModel = function (remoteModel) {
+	WebSocketModel.prototype.handleInitModelEvent = function (remoteModel) {
 		console.log("init model", remoteModel);
 		this.model.data = remoteModel.data;
 		this.model.status = remoteModel.status;
 		this.model.timestamp = remoteModel.timestamp;
 		this.emit("init", this.model.data, this.model.status);
+	};
+	WebSocketModel.prototype.handleModelChangeEvent = function (data) {
+		console.log("retrieved 'model-change' event", data);
+		this.set(data.selector, data.value, data.timestamp);
 	};
 	
 	
