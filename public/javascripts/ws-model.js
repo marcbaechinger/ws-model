@@ -43,18 +43,19 @@
 			that.set(data.selector, data.value, data.timestamp);
 		});
 		
-		this.socket.on('model-init', function (remoteModel) {
-			console.log("retrieved 'model-init' event", remoteModel);
-			that.model.data = remoteModel.data;
-			that.model.status = remoteModel.status;
-			that.model.timestamp = remoteModel.timestamp;
-			that.emit("init", that.model.data, that.model.status);
-		});
+		this.socket.on('model-init', proxy(this, this.initModel));
 		this.socket.on("error", function (data) {
 			console.err("remote error", data);
 		});
 		
 		this.socket.emit("model-register", this.modelId);
+	};
+	WebSocketModel.prototype.initModel = function (remoteModel) {
+		console.log("init model", remoteModel);
+		this.model.data = remoteModel.data;
+		this.model.status = remoteModel.status;
+		this.model.timestamp = remoteModel.timestamp;
+		this.emit("init", this.model.data, this.model.status);
 	};
 	
 	

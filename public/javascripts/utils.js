@@ -4,4 +4,5 @@
 			func.apply(that, arguments);
 		};
 	};
+	global.proxy = proxy;
 }(this));
