@@ -21,7 +21,7 @@
 				targetNode[propertyName] = value;
 			} else {
 				delete targetNode[propertyName];
-			}	
+			}
 		});
 	};
 	var get = function (selector, model) {

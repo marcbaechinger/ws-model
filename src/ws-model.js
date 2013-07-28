@@ -41,7 +41,9 @@ var selector = require("../public/javascripts/selector-engine.js"),
 	},
 	unregisterAll = function (models, socket) {
 		for (var modelId in models) {
-			unregisterForModel(models, socket, modelId);
+			if (models.hasOwnProperty(name)) {
+				unregisterForModel(models, socket, modelId);
+			}
 		}
 	},
 	updateModel = function (models, socket, updateRequest) {
@@ -65,10 +67,9 @@ var selector = require("../public/javascripts/selector-engine.js"),
 		}
 	},
 	handleConnection = function (models, socket) {
-		socket.on("model-register", _.partial(registerForModel, models, socket));
-		socket.on("model-unregister", _.partial(unregisterForModel, models, socket));
-		
-		socket.on('model-change', _.partial(updateModel, models, socket));
+		socket.on("model-register",		_.partial(registerForModel,		models, socket));
+		socket.on("model-unregister",	_.partial(unregisterForModel,	models, socket));
+		socket.on('model-change',		_.partial(updateModel,			models, socket));
 		
 		socket.on('model-fetch', function (modelId) {
 			socket.emit("model-init", models[modelId].dataModel);

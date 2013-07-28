@@ -1,8 +1,8 @@
-/*global io: false, Observable: false */
-/*jslint browser: true */
+/*global io: false, Observable: false, update: false, get: false, proxy: false */
+/*jslint browser: true, devel: true */
 (function (global) {
 	var WebSocketModel = function (modelId) {
-		this.modelId = modelId || "default";
+		this.modelId = modelId || "default";
 		this.model = {
 			state: "created",
 			data: {}
@@ -22,9 +22,9 @@
 			console.log("updated model timestamp", timestamp);
 			this.emit("set", this.model.data, selector, value);
 		} else {
-			this.socket.emit("model-change", { 
+			this.socket.emit("model-change", {
 				modelId: this.modelId,
-				selector: selector, 
+				selector: selector,
 				value: value,
 				timestamp: this.model.timestamp
 			});
@@ -55,7 +55,7 @@
 	WebSocketModel.prototype.handleModelChangeEvent = function (data) {
 		if (data.modelId === this.modelId) {
 			console.log("retrieved 'model-change' event", data);
-			this.set(data.selector, data.value, data.timestamp);	
+			this.set(data.selector, data.value, data.timestamp);
 		}
 	};
 	
