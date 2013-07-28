@@ -1,0 +1,55 @@
+extends layout
+
+block content
+	script(src="/javascripts/lib/jquery.js")
+	script(src="/socket.io/socket.io.js")
+	
+	script(src="/javascripts/utils.js")
+	script(src="/javascripts/observable.js")
+	script(src="/javascripts/selector-engine.js")
+	script(src="/javascripts/ws-model.js")
+
+	h1 WebSocketModel
+	.panel
+		label
+			span Field
+			input#name(type="text")
+		label
+			span Value
+			textarea#value
+		label
+			span.inline JSON
+			input#isJson(type="checkbox")
+		.row
+			button#set Set
+			button#delete Delete
+	pre
+		code#modelView
+	script
+		var model = new WebSocketModel(),
+			render = function (model) {
+				$("#modelView").text(JSON.stringify(model, null, 4));
+			};
+
+		model.bind("set", function (data, selector, value) {
+			console.log("set", data, selector, value);
+			render(data);
+		});
+
+		model.bind("init", function (data, state) {
+			console.log("init");
+			render(data);
+		});
+
+		$("#set").on("click", function () {
+			var name = $("#name").val(),
+				value = $("#value").val();
+
+			if ($("#isJson").prop("checked")) {
+				value = JSON.parse(value);
+			}
+			model.set(name, value);
+		});
+		$("#delete").on("click", function () {
+			model.purge($("#name").val());
+		});

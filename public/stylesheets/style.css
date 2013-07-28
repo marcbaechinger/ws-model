@@ -1,0 +1,24 @@
+body {
+  padding: 50px;
+  font: 16px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.panel > label > input[type=text],
+.panel > label > textarea,
+.panel > label > span {
+	display: block;
+	font-size: 18px;
+	line-height: 18px;
+	width: 100%;
+}
+.inline {
+	display: inline-block !important;
+	width: auto !important;
+}
+.panel > textarea {
+	height: 4em;
+}
