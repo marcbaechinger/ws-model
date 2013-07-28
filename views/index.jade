@@ -26,28 +26,32 @@ block content
 	pre
 		code#modelView
 	script
-		var model = new WebSocketModel(),
-			render = function (model) {
-				$("#modelView").text(JSON.stringify(model, null, 4));
-			};
+		(function () {
+			var model = new WebSocketModel(),
+				render = function (model) {
+					$("#modelView").text(JSON.stringify(model, null, 4));
+				},
+				nameInput = $("#name"),
+				valueInput = $("#value");
 
-		model.bind("set", function (data, selector, value) {
-			render(data);
-		});
+			model.bind("set", function (data, selector, value) {
+				render(data);
+			});
 
-		model.bind("init", function (data, state) {
-			render(data);
-		});
+			model.bind("init", function (data, state) {
+				render(data);
+			});
 
-		$("#set").on("click", function () {
-			var name = $("#name").val(),
-				value = $("#value").val();
+			$("#set").on("click", function () {
+				var name = nameInput.val(),
+					value = valueInput.val();
 
-			if ($("#isJson").prop("checked")) {
-				value = JSON.parse(value);
-			}
-			model.set(name, value);
-		});
-		$("#delete").on("click", function () {
-			model.purge($("#name").val());
-		});
+				if ($("#isJson").prop("checked")) {
+					value = JSON.parse(value);
+				}
+				model.set(name, value);
+			});
+			$("#delete").on("click", function () {
+				model.purge(nameInput.val());
+			});
+		}());
