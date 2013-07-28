@@ -39,12 +39,16 @@ var selector = require("../public/javascripts/selector-engine.js"),
 			});
 		}
 	},
+	unregisterAll = function (models, socket) {
+		for (var modelId in models) {
+			unregisterForModel(models, socket, modelId);
+		}
+	},
 	updateModel = function (models, socket, updateRequest) {
 		var dataModel = models[updateRequest.modelId].dataModel;
 		if (!dataModel) {
 			emitError(socket, "model not found", { modelId: updateRequest.modelId });
 		} else if (dataModel.timestamp === updateRequest.timestamp) {
-			console.log("model-change", updateRequest);
 			// update the model
 			selector.update(updateRequest.selector, updateRequest.value, dataModel.data);
 			// upcount timestamp
@@ -72,6 +76,7 @@ var selector = require("../public/javascripts/selector-engine.js"),
 		socket.on('model-timestamp', function (modelId) {
 			socket.emit("model-timestamp", models[modelId].dataModel.timestamp, modelId);
 		});
+		socket.on("disconnect", _.partial(unregisterAll, models, socket));
 	};
 
 var WebSocketModel = function (ioSockets) {
