@@ -3,24 +3,27 @@ var select = require("../public/javascripts/selector-engine.js");
 describe("set properties of the model", function setPropertiesModule() {
 	"use strict";
 	
-	it("set primitive properties (selector: 'address.street')", function setPrimtitiveProperties() {
+	it("assign a primitive value to a property defined by selector (selector: 'address.street')", function setPrimtitiveProperties() {
 		var model = {
 				address: {}
 			},
 			modified = new Date();
 
+
 		select.update("name", "Marc", model);
-		select.update("address.street", "Hegistrasse 37c", model);
+		select.update("address['street']", "Hegistrasse 37c", model);
+		select.update("address[\"street2\"]", "Hegistrasse 37c", model);
 		select.update("address.type", 2 , model);
 		select.update("address.modified", modified, model);
 		
 		expect(model.name).toBe("Marc");
 		expect(model.address.street).toBe("Hegistrasse 37c");
+		expect(model.address.street2).toBe("Hegistrasse 37c");
 		expect(model.address.type).toBe(2);
 		expect(model.address.modified).toBe(modified);
 	});
 	
-	it("set attribute of none exisiting property (selector: 'address.type')", function setNonExistingPrimitiveProperty() {
+	it("assign a value to not exisiting property defined by selector (selector: 'address.type')", function setNonExistingPrimitiveProperty() {
 		var model = {},
 			modified = new Date();
 
@@ -31,7 +34,7 @@ describe("set properties of the model", function setPropertiesModule() {
 	});
 
 	
-	it("set object graph as property", function setComplexObject() {
+	it("assign an object graph to the property defined by selector", function setComplexObject() {
 		var model = {
 				person: {
 					name: "Hans"
@@ -51,19 +54,29 @@ describe("set properties of the model", function setPropertiesModule() {
 		expect(model.person.gender).toBe("m");
 	});
 	
-	it("set array as property", function setComplexObject() {
+	it("assign arrays and items of arrays to a property defined by selector (selector: 'model.persons[3][1][1]')", function setComplexObject() {
 		var model = {
 				persons: []
 			},
 			arr = ["a", "b", "c"]
 
-		select.update("persons", arr , model);
-		select.update("persons.2", arr , model);
-		
+		select.update("persons", ["aa", "bb", "cc"] , model);
+		select.update("persons[2]", arr , model);
+		select.update("persons[2][1]", "value" , model);
+		select.update("persons[2][0]", {name: "value200"} , model);
+	
 		expect(model.persons).toBeDefined();
-		expect(model.persons[0]).toBe("a");
-		expect(model.persons[1]).toBe("b");
-		expect(model.persons[2][0]).toBe("a");
+		expect(model.persons[0]).toBe("aa");
+		expect(model.persons[1]).toBe("bb");
+		expect(model.persons[2][0].name).toBe("value200");
+		expect(model.persons[2][1]).toBe("value");
+
+		select.update("persons[3]", ["zz", ["uu", "vv"]] , model);
+		select.update("persons[3][1][0]", "hans" , model);
+		expect(model.persons[3][1][0]).toBe("hans");
+		expect(model.persons[3][1][1]).toBe("vv");
+		select.update("persons.3.1.1", "marc" , model);
+		expect(model.persons[3][1][1]).toBe("marc");
 	});
 
 	
@@ -137,7 +150,7 @@ describe("auto creation of non-existing properties defined in a selector path", 
 		var model = {},
 			toString = Object.prototype.toString;
 
-		select.update("person.0", "Marc" , model);
+		select.update("person[0]", "Marc" , model);
 		expect(model.person).toBeDefined();
 		expect(model.person[0]).toBe("Marc");
 		expect(toString.apply(model.person)).toBe(toString.apply([]));
@@ -155,7 +168,6 @@ describe("auto creation of non-existing properties defined in a selector path", 
 		expect(toString.apply(model.person[0])).toBe(toString.apply({}));
 	});
 });
-
 
 describe("delete properties of the model", function deletePropertiesModule() {
 	
@@ -178,7 +190,7 @@ describe("delete properties of the model", function deletePropertiesModule() {
 		select.update("person", undefined , model);
 		expect(model.person).not.toBeDefined();
 	});
-
+	
 	it("delete an array property", function arrayIndexSelector() {
 		var model = {
 				names: ["a", "b"]
@@ -190,34 +202,3 @@ describe("delete properties of the model", function deletePropertiesModule() {
 	});
 });
 
-
-describe("test isIndex helper function to recoginze index tokens like 0, 2, 999", function isIndexModule() {
-	it("recognize zero as an index", function recognizeIndexTokens() {
-		expect(select._test.isIndex("0")).toBe(true);
-	});
-	it("recognize a single digit as an index", function recognizeIndexTokens() {
-		expect(select._test.isIndex("9")).toBe(true);
-	});
-	it("recognize a mulple digit as an index", function recognizeIndexTokens() {
-		expect(select._test.isIndex("721212")).toBe(true);
-	});
-	it("leading zeros not allowed", function recognizeIndexTokens() {
-		expect(select._test.isIndex("01")).toBe(false);
-	});
-	it("recognize floating point are no indexes", function recognizeIndexTokens() {
-		expect(select._test.isIndex("1.2")).toBe(false);
-		expect(select._test.isIndex("1,2")).toBe(false);
-	});
-	it("trim whitespace", function recognizeIndexTokens() {
-		expect(select._test.isIndex("    2   ")).toBe(true);
-		expect(select._test.isIndex("1    ")).toBe(true);
-		expect(select._test.isIndex("   1222")).toBe(true);
-		
-		expect(select._test.isIndex("12 22")).toBe(false);
-	});
-	it("recognize a alphanum values digit as an index", function recognizeIndexTokens() {
-		expect(select._test.isIndex("72s1212")).toBe(false);
-		expect(select._test.isIndex("a")).toBe(false);
-	});
-	
-});

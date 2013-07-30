@@ -2,12 +2,15 @@
 	var isIndex = function(token) {
 		return !!token.trim().match(/^(0|[1-9][0-9]*)$/);
 	};
+	var normalize = function(selector) {
+		return selector.replace(/\[/g, ".").replace(/\]|\'|\"/g, "");
+	};
 	var getTargetNode = function (selector, model, callback) {
-		var nodes = selector.split("."),
+		var nodes = normalize(selector).split("."),
 			currentNode;
 		while (nodes.length > 1) {
 			currentNode = model[nodes[0]];
-			if (!currentNode) {
+			if (typeof currentNode === "undefined") {
 				model[nodes[0]] = isIndex(nodes[1]) ? [] : {};
 			}
 			model = model[nodes[0]];
@@ -35,6 +38,7 @@
 	global.update = update;
 	global.get = get;
 	global._test = {
-		isIndex: isIndex
+		isIndex: isIndex,
+		normalize: normalize
 	};
 }(this));
